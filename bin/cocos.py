@@ -96,7 +96,7 @@ class Cocos2dIniParser:
         if mode is None or len(mode) == 0:
             mode = 'source'
 
-        if mode not in ('source', 'precompiled', 'distro'):
+        if mode not in ('source', 'precompiled', 'distro', 'script'):
             Logging.warning("Warning: Invalid cocos2d-x mode: %s. Using 'source' as default." % mode)
             mode = 'source'
 
@@ -380,8 +380,9 @@ class CCPlugin(object):
         if os.path.isdir(cocos2dx_path):
             return cocos2dx_path
 
-        if cls.get_cocos2d_mode() is not "distro":
-            # In 'distro' mode this is not a warning since
+        cocos2d_mode = cls.get_cocos2d_mode()
+        if cocos2d_mode is not "distro" and cocos2d_mode is not "script":
+            # In 'distro' and 'script' mode this is not a warning since
             # the source code is not expected to be installed
             Logging.warning("Warning: cocos2d-x path not found")
         return None
