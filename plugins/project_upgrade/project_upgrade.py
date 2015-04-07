@@ -294,7 +294,10 @@ class CCPluginUpgrade(cocos.CCPlugin):
         package_name = "com.cocos.%s.%s" % (proj_lang, proj_name)
 
         shutil.rmtree(proj_dir)
-        ecode = run_shell("cocos new %s -l %s -p %s -d %s" % (proj_name, proj_lang, package_name, proj_par_dir))
+        cmd = "cocos new %s -l %s -p %s -d %s" % (proj_name, proj_lang, package_name, proj_par_dir)
+        if proj_lang != 'cpp':
+            cmd += ' -t runtime'
+        ecode = run_shell(cmd)
         if ecode:
             raise cocos.CCPluginError("Failed to create new project!")
 
