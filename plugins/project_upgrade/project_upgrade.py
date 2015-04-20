@@ -73,6 +73,10 @@ class CCPluginUpgrade(cocos.CCPlugin):
                             choices=["cpp", "lua", "js"],
                             help="Major programming language you want to use in project to upgrade, should be [cpp | lua | js]")
 
+        parser.add_argument("--console-dir",
+                            dest="console_dir",
+                            help="Specify the console tools directory.")
+
         (args, unknown) = parser.parse_known_args(argv)
 
         if len(unknown) > 0:
@@ -89,6 +93,16 @@ class CCPluginUpgrade(cocos.CCPlugin):
             self.proj_dir = args.src_dir
         else:
             self.proj_dir = os.path.abspath(os.path.join(os.getcwd(), args.src_dir))
+
+        if args.console_dir is None:
+            self.console_dir = ''
+        else:
+            if os.path.isabs(args.console_dir):
+                self.console_dir = args.console_dir
+            else:
+                self.console_dir = os.path.abspath(os.path.join(os.getcwd(), args.console_dir))
+            self.console_dir = self.console_dir.rstrip(os.path.sep)
+            self.console_dir += os.path.sep
 
         # strip the "/" or "\" at the end of project directory
         self.proj_dir = self.proj_dir.rstrip(os.path.sep)
@@ -294,7 +308,7 @@ class CCPluginUpgrade(cocos.CCPlugin):
         package_name = "com.cocos.%s.%s" % (proj_lang, proj_name)
 
         shutil.rmtree(proj_dir)
-        cmd = "cocos new %s -l %s -p %s -d %s" % (proj_name, proj_lang, package_name, proj_par_dir)
+        cmd = self.console_dir + "cocos new %s -l %s -p %s -d %s" % (proj_name, proj_lang, package_name, proj_par_dir)
         if proj_lang != 'cpp':
             cmd += ' -t runtime'
         ecode = run_shell(cmd)
