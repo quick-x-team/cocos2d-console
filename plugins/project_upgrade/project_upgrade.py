@@ -77,6 +77,10 @@ class CCPluginUpgrade(cocos.CCPlugin):
                             dest="console_dir",
                             help="Specify the console tools directory.")
 
+        parser.add_argument("--return-error",
+                            dest="return_error", action="store_true",
+                            help="Specify return error or not.")
+
         (args, unknown) = parser.parse_known_args(argv)
 
         if len(unknown) > 0:
@@ -152,6 +156,7 @@ class CCPluginUpgrade(cocos.CCPlugin):
                     % (self.current_version, self.target_version))
                 exit()
 
+        self.return_error = args.return_error
         self.no_backup = args.no_backup
         proj_par_dir, proj_name = os.path.split(self.proj_dir)
         self.proj_dir_name = proj_name
@@ -233,6 +238,8 @@ class CCPluginUpgrade(cocos.CCPlugin):
             if rollback_succeed:
                 # rollback succeed, remove the backup folder
                 shutil.rmtree(self.backup_proj_path, True)
+            if self.return_error:
+                raise cocos.CCPluginError("Upgrade Error !")
 
     def backup_project(self):
         self.backup_proj_path = os.path.join(self.backup_dir, self.backup_name)
