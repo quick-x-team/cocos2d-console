@@ -106,6 +106,8 @@ class CCPluginUpgrade(cocos.CCPlugin):
             else:
                 self.console_dir = os.path.abspath(os.path.join(os.getcwd(), args.console_dir))
             self.console_dir = self.console_dir.rstrip(os.path.sep)
+            if os.path.sep == '\\':
+                self.console_dir = '"' + self.console_dir + '"'
             self.console_dir += os.path.sep
 
         # strip the "/" or "\" at the end of project directory
